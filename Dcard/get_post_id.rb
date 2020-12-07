@@ -19,7 +19,7 @@ def get_post_id
     last_id = 0
 
     items.each do |item|
-      sleep(0.3)
+      sleep(0.5)
       forum_post_id << [item["id"],item["title"],item["forumName"], item["forumAlias"]]
       count += 1
       p count, "第一頁"
