@@ -1,6 +1,3 @@
-require 'fileutils'
-
-
 def mv_files
   table = CSV.parse(File.read("forums.csv"), headers: false)
   f = table[0.1]
