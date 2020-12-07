@@ -13,7 +13,7 @@ require 'fileutils'
 
 
 get_forums()
-get_post_id()
+f = get_post_id()
 get_post_content()
 get_post_comment()
-mv_files()
+mv_files(f)
