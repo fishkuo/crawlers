@@ -4,8 +4,8 @@ def get_post_id
   table = CSV.parse(File.read("forums.csv"), headers: false)
 
   # 先試1個版而已～
-  table = table[0...1]
-
+  table = table[1...2]
+  
   all_post_id = []
   table.each do |line|
     p "=============#{line[0]}============" # print board name 
@@ -60,4 +60,6 @@ def get_post_id
   end
 
   File.write("post_id.csv", all_post_id.map(&:to_csv).join)
+
+  f = table[0.1][0]
 end 
