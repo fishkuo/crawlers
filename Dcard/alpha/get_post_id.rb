@@ -51,20 +51,24 @@ def get_post_id
               cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             else
               puts "此文已爬，無修改，有新回文"
+              cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
               forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             end
           else 
             if cp_commentCount.include?(new_post_commentCount)
               puts "此文已爬，有修改，沒新回文"
+              cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
               forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             else
-              puts "此文已爬，有修改，有新回文"        
+              puts "此文已爬，有修改，有新回文"   
+              cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]     
               forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
               forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             end
           end
       else     
         puts "全新未爬文章"
+        cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
         forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
         forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
       end
@@ -94,20 +98,24 @@ def get_post_id
                      cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                    else
                      puts "此文已爬，無修改，有新回文"
+                     cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                      forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                    end
               else 
                 if cp_commentCount.include?(new_post_commentCount)
                   puts "此文已爬，有修改，沒新回文"
+                  cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                   forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                 else
-                  puts "此文已爬，有修改，有新回文"        
+                  puts "此文已爬，有修改，有新回文"    
+                  cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]    
                   forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                   forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                 end
               end
           else     
             puts "全新未爬文章"
+            cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
           end
@@ -127,20 +135,24 @@ def get_post_id
                      cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                    else
                      puts "此文已爬，無修改，有新回文"
+                     cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                      forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                    end
               else 
                 if cp_commentCount.include?(new_post_commentCount)
                   puts "此文已爬，有修改，沒新回文"
+                  cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                   forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                 else
-                  puts "此文已爬，有修改，有新回文"        
+                  puts "此文已爬，有修改，有新回文"  
+                  cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]      
                   forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                   forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
                 end
               end
           else     
             puts "全新未爬文章"
+            cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
           end
@@ -153,14 +165,13 @@ def get_post_id
       end
       end 
     end 
-    all_cp_post = cp_post + forum_post_id + forum_post_comment
     File.write("new_update_post_id.csv", forum_post_id.map(&:to_csv).join) 
     #需爬蟲文章包含新增的文章和編輯過的文章，提供給test_get_post_content的爬蟲目標
     File.write("new_post_comment.csv", forum_post_comment.map(&:to_csv).join) 
     #需爬蟲回文包含新增文章的回文和舊文章的新回文，提拱給test_get_post_comment的爬蟲目標
-    File.write("post_id.csv", all_cp_post.map(&:to_csv).join) 
+    File.write("post_id.csv", cp_post.map(&:to_csv).join) 
     #完整post_id檔，上傳資料庫用or用new_update_post_id.csv只上傳更新部分
-    File.write("cp_post_id.csv", all_cp_post.map(&:to_csv).join) 
+    File.write("cp_post_id.csv", cp_post.map(&:to_csv).join) 
     #內容同上，下次爬蟲比對用
   end
   f = forums[0.1][0]
