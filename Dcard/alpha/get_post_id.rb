@@ -44,9 +44,96 @@ def get_post_id
     new_post_id = post_item["id"] #取出文章id
     new_post_updatedAt = post_item["updatedAt"][0..9] + " " + post_item["updatedAt"][11..18]#取出文章更新時間
     new_post_commentCount = [post_item["id"].to_s,post_item["commentCount"].to_s]#取出文章id和回文數
-      if cp_id.include?(new_post_id.to_s) #比對文章id是否有在資料庫中
-          if cp_updatedAt.include?(new_post_updatedAt)#資料庫有id再比對更新時間
-            if cp_commentCount.include?(new_post_commentCount)#比對id與回文數
+    
+    judgment(cp_id,new_post_id,
+             cp_updatedAt,
+             new_post_updatedAt,
+             cp_commentCount,
+             new_post_commentCount,
+             cp_post,post_item,
+             forum_post_comment,
+             forum_post_id)
+      
+      p count, "第一頁"
+      if count == 30 
+        last_id = post_item["id"]
+        count = 0
+      end
+    end
+     while true
+       post_url = "#{forum[2]}&before=#{last_id}" 
+       post_uri = URI(post_url)
+       post_data = Net::HTTP.get(post_uri)
+       post_items = JSON.parse(post_data)
+
+      if post_items.size < 30 
+         post_items.each do |post_item|
+         new_post_id = post_item["id"] 
+         new_post_updatedAt = post_item["updatedAt"][0..9] + " " + post_item["updatedAt"][11..18]
+         new_post_commentCount = [post_item["id"].to_s,post_item["commentCount"].to_s]
+          sleep(0.5)
+          p "最後一頁"
+          
+          judgment(cp_id,new_post_id,
+             cp_updatedAt,
+             new_post_updatedAt,
+             cp_commentCount,
+             new_post_commentCount,
+             cp_post,post_item,
+             forum_post_comment,
+             forum_post_id)
+         end 
+         break
+      else 
+        count = 0
+        post_items.each do |post_item|
+        new_post_id = post_item["id"] 
+        new_post_updatedAt = post_item["updatedAt"][0..9] + " " + post_item["updatedAt"][11..18]
+        new_post_commentCount = [post_item["id"].to_s,post_item["commentCount"].to_s]
+        sleep(0.4)
+       
+        judgment(cp_id,new_post_id,
+             cp_updatedAt,
+             new_post_updatedAt,
+             cp_commentCount,
+             new_post_commentCount,
+             cp_post,post_item,
+             forum_post_comment,
+             forum_post_id)
+        count += 1
+        p count, "後面還有"
+        if count == 30 
+          last_id = post_item["id"]
+          count = 0
+        end
+      end
+      end 
+    end 
+    File.write("new_update_post_id.csv", forum_post_id.map(&:to_csv).join) 
+    #需爬蟲文章包含新增的文章和編輯過的文章，提供給test_get_post_content的爬蟲目標
+    File.write("new_post_comment.csv", forum_post_comment.map(&:to_csv).join) 
+    #需爬蟲回文包含新增文章的回文和舊文章的新回文，提拱給test_get_post_comment的爬蟲目標
+    File.write("post_id.csv", cp_post.map(&:to_csv).join) 
+    #完整post_id檔，上傳資料庫用or用new_update_post_id.csv只上傳更新部分
+    File.write("cp_post_id.csv", cp_post.map(&:to_csv).join) 
+    #內容同上，下次爬蟲比對用
+  end
+  f = forums[0.1][0]
+end 
+
+private
+def judgment(cp_id,
+             new_post_id,
+             cp_updatedAt,
+             new_post_updatedAt,
+             cp_commentCount,
+             new_post_commentCount,
+             cp_post,post_item,
+             forum_post_comment,
+             forum_post_id)
+      if cp_id.include?(new_post_id.to_s)
+          if cp_updatedAt.include?(new_post_updatedAt)
+            if cp_commentCount.include?(new_post_commentCount)
               puts "此文已爬，無修改，沒新回文"
               cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
             else
@@ -72,107 +159,4 @@ def get_post_id
         forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
         forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
       end
-      p count, "第一頁"
-      if count == 30 
-        last_id = post_item["id"]
-        count = 0
-      end
-    end
-     while true
-       post_url = "#{forum[2]}&before=#{last_id}" 
-       post_uri = URI(post_url)
-       post_data = Net::HTTP.get(post_uri)
-       post_items = JSON.parse(post_data)
-
-      if post_items.size < 30 
-         post_items.each do |post_item|
-         new_post_id = post_item["id"] 
-         new_post_updatedAt = post_item["updatedAt"][0..9] + " " + post_item["updatedAt"][11..18]
-         new_post_commentCount = [post_item["id"].to_s,post_item["commentCount"].to_s]
-          sleep(0.5)
-          p "最後一頁"
-          if cp_id.include?(new_post_id.to_s) 
-              if cp_updatedAt.include?(new_post_updatedAt)
-                   if cp_commentCount.include?(new_post_commentCount)
-                     puts "此文已爬，無修改，沒新回文"
-                     cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                   else
-                     puts "此文已爬，無修改，有新回文"
-                     cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                     forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                   end
-              else 
-                if cp_commentCount.include?(new_post_commentCount)
-                  puts "此文已爬，有修改，沒新回文"
-                  cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                  forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                else
-                  puts "此文已爬，有修改，有新回文"    
-                  cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]    
-                  forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                  forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                end
-              end
-          else     
-            puts "全新未爬文章"
-            cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-            forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-            forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-          end
-         end 
-         break
-      else 
-        count = 0
-        post_items.each do |post_item|
-        new_post_id = post_item["id"] 
-        new_post_updatedAt = post_item["updatedAt"][0..9] + " " + post_item["updatedAt"][11..18]
-        new_post_commentCount = [post_item["id"].to_s,post_item["commentCount"].to_s]
-        sleep(0.4)
-        if cp_id.include?(new_post_id.to_s)
-              if cp_updatedAt.include?(new_post_updatedAt)
-                   if cp_commentCount.include?(new_post_commentCount)
-                     puts "此文已爬，無修改，沒新回文"
-                     cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                   else
-                     puts "此文已爬，無修改，有新回文"
-                     cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                     forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                   end
-              else 
-                if cp_commentCount.include?(new_post_commentCount)
-                  puts "此文已爬，有修改，沒新回文"
-                  cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                  forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                else
-                  puts "此文已爬，有修改，有新回文"  
-                  cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]      
-                  forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                  forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-                end
-              end
-          else     
-            puts "全新未爬文章"
-            cp_post << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-            forum_post_id << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-            forum_post_comment << [post_item["id"],post_item["title"],post_item["forumName"], post_item["forumAlias"],post_item["updatedAt"],post_item["commentCount"]]
-          end
-        count += 1
-        p count, "後面還有"
-        if count == 30 
-          last_id = post_item["id"]
-          count = 0
-        end
-      end
-      end 
-    end 
-    File.write("new_update_post_id.csv", forum_post_id.map(&:to_csv).join) 
-    #需爬蟲文章包含新增的文章和編輯過的文章，提供給test_get_post_content的爬蟲目標
-    File.write("new_post_comment.csv", forum_post_comment.map(&:to_csv).join) 
-    #需爬蟲回文包含新增文章的回文和舊文章的新回文，提拱給test_get_post_comment的爬蟲目標
-    File.write("post_id.csv", cp_post.map(&:to_csv).join) 
-    #完整post_id檔，上傳資料庫用or用new_update_post_id.csv只上傳更新部分
-    File.write("cp_post_id.csv", cp_post.map(&:to_csv).join) 
-    #內容同上，下次爬蟲比對用
-  end
-  f = forums[0.1][0]
-end 
+end
