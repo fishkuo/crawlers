@@ -12,8 +12,6 @@ require("./get_post_comment.rb")
 
 
 
-
-
 get_forums() 
 f = get_post_id()
 get_post_content()

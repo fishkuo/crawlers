@@ -2,7 +2,7 @@
 
 def get_post_id
   # 抓文章的id,標題,看板名稱,英文版名,更新時間,回文數量
-
+require 'time'
   all_forums = CSV.parse(File.read("forums.csv"), headers: false)
 
   #比對用post資料
@@ -15,8 +15,8 @@ def get_post_id
      cp_id << id.first 
    end
    cp_post_id.each do |time|
-     cp_updatedAt << time[4][0..9]+" "+time[4][11..18]
-   end
+     cp_updatedAt <<  DateTime.parse(time[4]).strftime('%Y-%m-%d %H:%M:%S')
+   end 
    cp_post_id.each do |count|
      cp_commentCount << [count[0], count[5]] 
    end
@@ -42,7 +42,7 @@ def get_post_id
     post_items.each do |post_item| #開始比對文章id
     count += 1 #post計數
     new_post_id = post_item["id"] #取出文章id
-    new_post_updatedAt = post_item["updatedAt"][0..9] + " " + post_item["updatedAt"][11..18]#取出文章更新時間
+    new_post_updatedAt = DateTime.parse(post_item["updatedAt"]).strftime('%Y-%m-%d %H:%M:%S')#取出文章更新時間
     new_post_commentCount = [post_item["id"].to_s,post_item["commentCount"].to_s]#取出文章id和回文數
     
     judgment(cp_id,new_post_id,
@@ -69,7 +69,7 @@ def get_post_id
       if post_items.size < 30 
          post_items.each do |post_item|
          new_post_id = post_item["id"] 
-         new_post_updatedAt = post_item["updatedAt"][0..9] + " " + post_item["updatedAt"][11..18]
+         new_post_updatedAt = DateTime.parse(post_item["updatedAt"]).strftime('%Y-%m-%d %H:%M:%S')
          new_post_commentCount = [post_item["id"].to_s,post_item["commentCount"].to_s]
           sleep(0.5)
           p "最後一頁"
@@ -88,7 +88,7 @@ def get_post_id
         count = 0
         post_items.each do |post_item|
         new_post_id = post_item["id"] 
-        new_post_updatedAt = post_item["updatedAt"][0..9] + " " + post_item["updatedAt"][11..18]
+        new_post_updatedAt = DateTime.parse(post_item["updatedAt"]).strftime('%Y-%m-%d %H:%M:%S')
         new_post_commentCount = [post_item["id"].to_s,post_item["commentCount"].to_s]
         sleep(0.4)
        
