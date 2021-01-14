@@ -1,5 +1,3 @@
-
-# 爬下目前熱門版的url（會變動）
 def get_board
   url = 'https://www.ptt.cc/bbs/hotboards.html'
   doc = Nokogiri::HTML(open( url ))
